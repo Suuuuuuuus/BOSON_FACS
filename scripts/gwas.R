@@ -6,7 +6,7 @@ library(qqman)
 library(data.table)
 library(tidyverse)
 library(CMplot)
-source("estlambda.R")
+source("../scripts/estlambda.R")
 
 #setwd("Desktop/Boson FACS/boson_vcf/")
 
@@ -20,9 +20,12 @@ names(res)<-c("SNP", "CHR", "BP", "P")
 
 
 if (plot == "TRUE"){
-  dir.create(paste0("graphs/", marker))
-  setwd(marker)
-  
+  path = paste0("graphs/", marker)
+  if (!dir.exists(path)){
+    dir.create(path)
+  }
+# setwd(marker)
+
   CMplot(res,plot.type = "q",threshold = 0.05, file = "jpg", file.name = marker, dpi = 300)
   CMplot(res,plot.type = "m", LOG10=TRUE, amplify = T, col = c("grey30", "grey60"), 
          file = "jpg", file.name = marker, 
