@@ -1,0 +1,9 @@
+.ipynb_checkpoints/
+__pycache__/
+biblio/
+boson_metadata/
+boson_notes/
+boson_vcf/
+boson_vcfs_by_chromosome/
+facs/
+
