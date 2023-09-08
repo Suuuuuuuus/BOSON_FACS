@@ -1,4 +1,14 @@
 import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import scipy as sp
+import csv
+import io 
+import os
+from scipy.stats import poisson
+import itertools
+import collections
 import seaborn as sns
 
 ### filters ###
@@ -104,3 +114,18 @@ def get_phenotype(df, col, marker_name = None, convert_decimal = True, trailing_
             marker_name = col
         phe.to_csv('boson_vcf/phenotypes/' + marker_name + '.txt', header = None, index = None, sep = ' ')
     return None
+
+### end of phe ###
+### parse plink GWASs results ###
+
+def parse_plink(file, save = False, save_path = None):
+    gwas = []
+    for line in open(file): 
+        lst = line.split('\n')[0].strip().split(' ')
+        lstnew = [i for i in lst if i != '']
+        gwas.append(lstnew)
+    gwas.pop(0)
+    gwas = pd.DataFrame(gwas, columns=['chr', 'ID', 'pos', 'alt', 'add', 'sample_size', 'beta', 'SE', 'p'])
+    if save:
+        gwas.to_csv(save_path, index = None, sep = ' ')
+    return gwas
