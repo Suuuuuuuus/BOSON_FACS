@@ -6,4 +6,7 @@ boson_notes/
 boson_vcf/
 boson_vcfs_by_chromosome/
 facs/
-
+boson_genotyped/
+boson_original_files/
+boson_plink/
+graphs/
