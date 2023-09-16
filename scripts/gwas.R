@@ -6,7 +6,7 @@ library(qqman)
 library(data.table)
 library(tidyverse)
 library(CMplot)
-source("../scripts/estlambda.R")
+source("../scripts/kactk.R")
 
 #setwd("Desktop/Boson FACS/boson_vcf/")
 
