@@ -10,6 +10,7 @@ from scipy.stats import poisson
 import itertools
 import collections
 import seaborn as sns
+from sklearn import preprocessing
 
 ### filters ###
 
@@ -57,7 +58,7 @@ def sanity_check_filter4(df, col, lower_bound = 3, upper_bound = -3, plot = Fals
     n = df.shape[0]
     df['normalised']=(df[col]-df[col].mean())/df[col].std()
     if plot:
-        plot_hist(df, col, 'Percentage', save = save, save_path = save_path)
+        plot_strip(df, col, save = save, save_path = save_path)
     # Filtering
     df = df[(df['normalised'] > -3) & (df['normalised'] < 3)]
     df = df.drop(columns = ['normalised'])
@@ -67,15 +68,25 @@ def sanity_check_filter4(df, col, lower_bound = 3, upper_bound = -3, plot = Fals
 ### end of filters ###
 ### plot ###
 
-def plot_box_distribution(df, title):
-    ax = sns.boxplot(data=df, showfliers = False)
-    # ax = sns.swarmplot(data=boxplot_panel1, color=".25")
-    plt.title(title)
-    plt.grid()
-    plt.xticks(rotation=90)
-    plt.ylabel('Percentage (%)')
-    plt.show()
-def plot_hist(df, column, xlabel, bins = 20, label = True, save = False, save_path = None):
+def plot_strip(df, column, xlabel = None, title = None, upper = 0.75, lower = 0.25, save = False, save_path = None):
+    data = df[column]
+    upper_quartile = data.quantile(upper)
+    lower_quartile = data.quantile(lower)
+    fig, ax = plt.subplots(figsize=(5.5, 5.5))
+    sns.stripplot(data=data, jitter = 0.01, ax = ax, alpha = 0.6, zorder = 1)
+    ax.hlines(upper_quartile, xmin=-0.05, xmax=0.05, colors="black", linestyles="-", linewidth=2, alpha = 0)
+    ax.hlines(lower_quartile, xmin=-0.05, xmax=0.05, colors="black", linestyles="-", linewidth=2, alpha = 0)
+    ax.hlines(upper_quartile, xmin=-0.005, xmax=0.005, colors="black", linestyles="-", linewidth=2)
+    ax.hlines(lower_quartile, xmin=-0.005, xmax=0.005, colors="black", linestyles="-", linewidth=2)
+    ax.vlines(x = 0, ymin = upper_quartile, ymax = lower_quartile, colors = "black", linestyles = "-", linewidth = 2)
+    ax.scatter(0, data.mean(), marker = 'x', alpha = 1, s = 40, c = 'black')
+    
+    ax.set_xlabel(xlabel)
+    ax.set_title(title)
+    ax.set_ylabel('Percentage (%)')
+    if save:
+        plt.savefig(save_path, bbox_inches = "tight", dpi=300)
+def plot_hist(df, column, xlabel = None, bins = 20, label = True, save = False, save_path = None):
     counts, edges, bars = plt.hist(df[column], alpha=0.75, bins = bins, histtype='bar', ec='black')
     if label:
         plt.bar_label(bars)
@@ -83,7 +94,7 @@ def plot_hist(df, column, xlabel, bins = 20, label = True, save = False, save_pa
     plt.ylabel('Counts')
     plt.title(column)
     if save:
-        plt.savefig(save_path + '.png', bbox_inches = "tight", dpi=300)
+        plt.savefig(save_path, bbox_inches = "tight", dpi=300)
     plt.show()
 def plot_box(df, column):
     counts, edges, bars = plt.hist(df[column], alpha=0.75, histtype='bar', ec='black')
@@ -97,22 +108,24 @@ def plot_box(df, column):
 
 def format_float(f, dec = 4):
     return f'{f:.{dec}f}'
+def quantile_normalisation(df, col):
+    return preprocessing.quantile_transform(df[col].values.reshape(-1, 1), output_distribution = 'normal', n_quantiles = df.shape[0])
     
 ### end of auxiliaries ###
 
 ### phe ###
 
-def get_phenotype(df, col, marker_name = None, convert_decimal = True, trailing_str = 'BOSON', save_file = False):
+def get_phenotype(df, col, quantile_transformation = True, convert_decimal = False, trailing_str = 'BOSON', save = False, save_path = None):
     df['Patient ID'] = trailing_str + df['Patient ID']
     df['IID'] = df['Patient ID']
+    if quantile_transformation:
+        df[col] = quantile_normalisation(df, col)
     if convert_decimal:
         df[col] = df[col]/100
     phe = df.loc[:, ['Patient ID', 'IID', col]]
     phe[col] = phe[col].apply(format_float)
-    if save_file:
-        if marker_name is None:
-            marker_name = col
-        phe.to_csv('boson_vcf/phenotypes/' + marker_name + '.txt', header = None, index = None, sep = ' ')
+    if save:
+        phe.to_csv(save_path, header = None, index = None, sep = ' ')
     return None
 
 ### end of phe ###

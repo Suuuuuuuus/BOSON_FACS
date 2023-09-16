@@ -18,13 +18,9 @@ df = fread(res_file)
 res = data.frame(df$SNP, df$CHR, df$BP, df$P)
 names(res)<-c("SNP", "CHR", "BP", "P")
 
-
 if (plot == "TRUE"){
-  path = paste0("graphs/", marker)
-  if (!dir.exists(path)){
-    dir.create(path)
-  }
-# setwd(marker)
+
+  setwd("../graphs/facs-host/")
 
   CMplot(res,plot.type = "q",threshold = 0.05, file = "jpg", file.name = marker, dpi = 300)
   CMplot(res,plot.type = "m", LOG10=TRUE, amplify = T, col = c("grey30", "grey60"), 
@@ -34,7 +30,6 @@ if (plot == "TRUE"){
 
 est = estlambda(df$P)$estimate
 res = paste0(marker, "\t", est)
-write(res, file = "genomic_inflation_factor.txt", append = TRUE)
-
+write(res, file = "../../boson_vcf/genomic_inflation_factor.txt", append = TRUE)
 
 #setwd(dirname(normalizePath(getwd())))
