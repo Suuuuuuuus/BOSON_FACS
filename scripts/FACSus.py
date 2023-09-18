@@ -11,7 +11,8 @@ import itertools
 import collections
 import seaborn as sns
 from sklearn import preprocessing
-
+from PIL import Image, ImageDraw, ImageFont
+from IPython.display import display
 ### filters ###
 
 # Exclude single panel sum outliers
@@ -102,6 +103,76 @@ def plot_box(df, column):
     plt.xlabel('Percentage')
     plt.ylabel('Counts')
     plt.title(column)
+def combine_gwas_res(marker, indir = "/gpfs3/well/ansari/users/gjx698/BOSON_FACS/graphs/facs-host/baseline/", 
+                     outdir = None, title_size = 200, show = False, save = False,
+                     font_path = "/well/ansari/users/gjx698/conda/skylake/envs/sus/fonts/SourceCodePro-BlackIt.ttf", 
+                     output_resize = True, output_resize_multiplier = 5):
+    image1 = Image.open(indir + "Rect_Manhtn." + marker + ".jpg")
+    image2 = Image.open(indir + "strip." + marker + ".png")
+    image3 = Image.open(indir + "QQplot." + marker + ".jpg")
+    
+    # Get the dimensions of the images
+    width1, height1 = image1.size
+    width2, height2 = image2.size
+    width3, height3 = image3.size
+    
+    if height2 >= height3:
+        height3 = height2
+        width3 = int(width3 * height2/height3)
+        image3.resize((width3, height3))
+    else:
+        height2 = height3
+        width2 = int(width2 * height3/height2)
+        image2.resize((width2, height2))
+    
+    # Calculate the width and height of the combined image
+    total_width = width1
+    max_height = height1 + height2 + title_size
+    
+    # Create a new blank image with the calculated dimensions
+    combined_image = Image.new("RGB", (total_width, max_height), (255, 255, 255))
+    
+    interval = width1 - width2 - width3
+    blank = int(interval/3)
+    
+    # Paste the three images onto the combined image
+    combined_image.paste(image1, (0, height2+title_size))
+    combined_image.paste(image2, (blank, title_size + 150))
+    combined_image.paste(image3, (width2 + blank*2, title_size))
+    
+    draw = ImageDraw.Draw(combined_image)
+    
+    # Define the title or caption text and font
+    
+    font = ImageFont.truetype(font_path, size = title_size)  # You can specify a different font and size
+    
+    # Define the position where you want to place the title
+    title_position = (0, 10)  # Adjust the coordinates as needed
+    
+    # Define the text color (RGB format)
+    text_color = (0, 0, 0)  # Black color
+    
+    draw.text(title_position, marker, fill=text_color, font=font)
+    
+    if output_resize:
+        total_width = int(total_width/output_resize_multiplier)
+        max_height = int(max_height/output_resize_multiplier)
+    
+    combined_image.resize((total_width, max_height))
+    
+    if show:
+        display(combined_image)
+    # Save the combined image
+    if outdir == None:
+        outdir = indir
+
+    if save:
+        combined_image.save(outdir + marker + ".combined.png")
+    
+    # Close the input images
+    image1.close()
+    image2.close()
+    image3.close()
 
 ### end of plots ###
 ### auxiliaries ###

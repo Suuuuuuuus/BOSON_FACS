@@ -20,7 +20,7 @@ names(res)<-c("SNP", "CHR", "BP", "P")
 
 if (plot == "TRUE"){
 
-  setwd("../graphs/facs-host/")
+  setwd("../graphs/facs-host/baseline/")
 
   CMplot(res,plot.type = "q",threshold = 0.05, file = "jpg", file.name = marker, dpi = 300)
   CMplot(res,plot.type = "m", LOG10=TRUE, amplify = T, col = c("grey30", "grey60"), 
