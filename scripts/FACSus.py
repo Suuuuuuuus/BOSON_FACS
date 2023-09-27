@@ -103,7 +103,7 @@ def plot_box(df, column):
     plt.xlabel('Percentage')
     plt.ylabel('Counts')
     plt.title(column)
-def combine_gwas_res(marker, indir = "/gpfs3/well/ansari/users/gjx698/BOSON_FACS/graphs/facs-host/baseline/", 
+def combine_gwas_res(marker, indir = "/gpfs3/well/ansari/users/gjx698/BOSON_FACS/graphs/facs-host/baseline/all/", 
                      outdir = None, title_size = 200, show = False, save = False,
                      font_path = "/well/ansari/users/gjx698/conda/skylake/envs/sus/fonts/SourceCodePro-BlackIt.ttf", 
                      output_resize = True, output_resize_multiplier = 5):
@@ -181,7 +181,13 @@ def format_float(f, dec = 4):
     return f'{f:.{dec}f}'
 def quantile_normalisation(df, col):
     return preprocessing.quantile_transform(df[col].values.reshape(-1, 1), output_distribution = 'normal', n_quantiles = df.shape[0])
-    
+def get_smallest_p(file):
+    df = pd.read_csv(file, sep = ' ').dropna()
+    df['p'] = df['p'].astype(float)
+    df = df.sort_values(by = 'p').head(1)
+    print(df)
+    return df[['chr', 'pos']]
+
 ### end of auxiliaries ###
 
 ### phe ###
