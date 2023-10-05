@@ -215,7 +215,9 @@ def parse_plink(file, save = False, save_path = None):
         lstnew = [i for i in lst if i != '']
         gwas.append(lstnew)
     gwas.pop(0)
-    gwas = pd.DataFrame(gwas, columns=['chr', 'ID', 'pos', 'alt', 'add', 'sample_size', 'beta', 'SE', 'p'])
+    gwas = pd.DataFrame(gwas, columns=['chr', 'ID', 'pos', 'alt', 'add', 'sample_size', 'beta', 'SE', 'p']).dropna()
+    gwas['p'] = gwas['p'].astype(float)
+    gwas = gwas.sort_values(by = 'p', ascending = True)
     if save:
         gwas.to_csv(save_path, index = None, sep = ' ')
     return gwas
