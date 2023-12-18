@@ -12,3 +12,6 @@ res_file = paste0(indir , marker, ".assoc.linear")
 df = fread(res_file)
 res = data.frame(df$SNP, df$CHR, df$BP, df$P)
 names(res)<-c("SNP", "CHR", "BP", "P")
+
+
+##
