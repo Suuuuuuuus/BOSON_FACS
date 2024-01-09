@@ -193,13 +193,13 @@ def get_smallest_p(file):
 ### phe ###
 
 def get_phenotype(df, col, quantile_transformation = True, convert_decimal = False, trailing_str = 'BOSON', save = False, save_path = None):
-    df['Patient ID'] = trailing_str + df['Patient ID']
-    df['IID'] = df['Patient ID']
+    df['Patient_ID'] = trailing_str + df['Patient_ID']
+    df['IID'] = df['Patient_ID']
     if quantile_transformation:
         df[col] = quantile_normalisation(df, col)
     if convert_decimal:
         df[col] = df[col]/100
-    phe = df.loc[:, ['Patient ID', 'IID', col]]
+    phe = df.loc[:, ['Patient_ID', 'IID', col]]
     phe[col] = phe[col].apply(format_float)
     if save:
         phe.to_csv(save_path, header = None, index = None, sep = ' ')
