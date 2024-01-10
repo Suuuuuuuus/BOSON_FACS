@@ -4,7 +4,7 @@ import numpy as np
 import seaborn as sns
 import scipy as sp
 import csv
-import io 
+import io
 import os
 from scipy.stats import poisson
 import itertools
@@ -26,7 +26,7 @@ def sanity_check_filter(df, cols, newname, lower_bound = 95, upper_bound = 105, 
     df = df.drop(columns = [newname])
 #     print('Number of samples removed for filter', newname, ':', n-df.shape[0])
     return df
-# Exclude cross panel std dev outliers 
+# Exclude cross panel std dev outliers
 def sanity_check_filter2(df, cols, newname, plot = False, save = False, save_path = None):
     n = df.shape[0]
     df[newname] = df[cols].std(axis=1)
@@ -216,6 +216,7 @@ def parse_plink(file, save = False, save_path = None):
         gwas.append(lstnew)
     gwas.pop(0)
     gwas = pd.DataFrame(gwas, columns=['chr', 'ID', 'pos', 'alt', 'add', 'sample_size', 'beta', 'SE', 'p']).dropna()
+    gwas = gwas[gwas['p'] != 'NA']
     gwas['p'] = gwas['p'].astype(float)
     gwas = gwas.sort_values(by = 'p', ascending = True)
     if save:

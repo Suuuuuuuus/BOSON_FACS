@@ -13,11 +13,11 @@ source("../scripts/kactk.R")
 #setwd("Desktop/Boson FACS/boson_vcf/")
 #marker = "CD3+CD57+"
 
-res_file = paste0(indir , marker, ".assoc.linear")
+res_file = paste0(indir , marker, ".baseline.gwas.txt")
 
 df = fread(res_file)
-res = data.frame(df$SNP, df$CHR, df$BP, df$P)
-names(res)<-c("SNP", "CHR", "BP", "P")
+res = data.frame(df$ID, df$chr, df$pos, df$p)
+colnames(res)<-c("SNP", "CHR", "BP", "P")
 
 if (plot == "TRUE"){
 
@@ -29,7 +29,7 @@ if (plot == "TRUE"){
          signal.cex = c(1,1), signal.pch = c(20,20),signal.col = c("red","orange"), dpi = 300)
 }
 
-est = estlambda(df$P)$estimate
+est = estlambda(df$p)$estimate
 res = paste0(marker, "\t", est)
 write(res, file = "../../boson_vcf/genomic_inflation_factor_all.txt", append = TRUE)
 
