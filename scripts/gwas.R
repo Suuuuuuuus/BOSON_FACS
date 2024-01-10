@@ -31,6 +31,6 @@ if (plot == "TRUE"){
 
 est = estlambda(df$p)$estimate
 res = paste0(marker, "\t", est)
-write(res, file = "boson_vcf/genomic_inflation_factor_all.txt", append = TRUE)
+write(res, file = "genomic_inflation_factor_all.txt", append = TRUE)
 
 #setwd(dirname(normalizePath(getwd())))
