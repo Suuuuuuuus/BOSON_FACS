@@ -1,4 +1,5 @@
 **/*.Rhistory
+previous_results/
 .ipynb_checkpoints/
 __pycache__/
 biblio/
