@@ -11,3 +11,7 @@ boson_genotyped/
 boson_original_files/
 boson_plink/
 graphs/
+data/
+**/*.DS_Store
+scripts/.DS_Store
+scripts/.Rhistory
