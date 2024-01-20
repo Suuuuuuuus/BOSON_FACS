@@ -1,23 +1,3 @@
-library(dagitty) 
-
-"plotdag" <-
-  function() {
-    dag <-dagitty("dag{
-      PCs -> HostGenetics -> Cirrhosis -> Phenotype
-      PCs -> Phenotype
-      HostGenetics -> Phenotype
-      Cirrhosis <- Sex -> Phenotype
-      Cirrhosis <- Age -> Phenotype
-      Cirrhosis <- IFN -> Phenotype
-      HostGenetics -> VL
-      IFN -> VL -> Phenotype
-      Cirrhosis <- VL <- PT -> Phenotype
-      Cirrhosis <- PT -> Phenotype
-    }")
-    adjustmentSets( dag, exposure="HostGenetics", outcome="Phenotype", type = "minimal", effect="direct")
-    plot(dag)
-  }
-
 "ztransform" <- 
   function(formula,data,family=gaussian) {
     if (missing(data)) {

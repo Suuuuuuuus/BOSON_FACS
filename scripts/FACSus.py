@@ -187,11 +187,18 @@ def get_smallest_p(file):
     df = df.sort_values(by = 'p').head(1)
     print(df)
     return df[['chr', 'pos']]
-
+def encode_sex(s):
+    if s == 'Female':
+        return 2
+    elif s == 'Male':
+        return 1
+    else:
+        return 0
 ### end of auxiliaries ###
 
 ### phe ###
 
+# Generate phe.txt file
 def get_phenotype(df, col, quantile_transformation = True, convert_decimal = False, trailing_str = 'BOSON', save = False, save_path = None):
     df['Patient_ID'] = trailing_str + df['Patient_ID']
     df['IID'] = df['Patient_ID']
@@ -205,7 +212,14 @@ def get_phenotype(df, col, quantile_transformation = True, convert_decimal = Fal
         phe.to_csv(save_path, header = None, index = None, sep = ' ')
     return None
 
-### end of phe ###
+# Plot original distribution and filter out outliers
+def get_phe(col, df, save_name, plot = False, save_plot = False, save_path_plot = None, save_phe = False, save_path_phe = None):
+    if save_plot and save_path_plot is None:
+        save_path_plot = "graphs/facs-host/baseline/strip." + save_name + ".png"
+    if save_phe and save_path_phe is None:
+        save_path_phe = "boson_vcf/phenotypes/" + save_name + ".txt"
+    tmp = sanity_check_filter4(df, col, plot = plot, save = save_plot, save_path = save_path_plot)
+    get_phenotype(tmp, col, save = save_phe, save_path = save_path_phe)### end of phe ###
 ### parse plink GWASs results ###
 
 def parse_plink(file, save = False, save_path = None):
@@ -218,7 +232,7 @@ def parse_plink(file, save = False, save_path = None):
     gwas = pd.DataFrame(gwas, columns=['chr', 'ID', 'pos', 'alt', 'add', 'sample_size', 'beta', 'SE', 'p']).dropna()
     gwas = gwas[gwas['p'] != 'NA']
     gwas['p'] = gwas['p'].astype(float)
-    gwas = gwas.sort_values(by = 'p', ascending = True)
+    gwas = gwas.sort_values(by = 'p', ascending = True).dropna()
     if save:
         gwas.to_csv(save_path, index = None, sep = ' ')
     return gwas

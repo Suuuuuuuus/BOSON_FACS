@@ -1,0 +1,6 @@
+{
+    "markers": "data/file_lsts/markers.tsv",
+
+    "num_top": 20,
+    "check_range": 100000
+}
