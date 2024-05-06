@@ -15,6 +15,3 @@ dag <-dagitty('dag{
 
 adjustmentSets( dag, exposure="Host genetics", outcome="Immune cell counts", type = "minimal", effect="direct")
 plot(dag)
-
-
-
