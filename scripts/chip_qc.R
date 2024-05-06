@@ -1,6 +1,8 @@
 library(tidyverse)
 setwd("Desktop/Sheila/file/plink/")
 
+# This snippet was written while processing Sheila's data. This is more of an archive purpose.
+
 indmiss = read.table(file="plink.imiss", header=TRUE)
 snpmiss = read.table(file="plink.lmiss", header=TRUE)
 # read data into R
